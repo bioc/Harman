@@ -1,0 +1,15 @@
+
+Changelog
+=========
+
+0.9000	Initial public version
+0.9001	Modify Rcpp code and remove R layer workaround for confounded data.
+0.99    First Bioconductor version. Mostly code cleanup changes.
+0.991   Address build issues.
+0.992   Address build issues.
+0.993   Address build issues.
+0.994	Add zzz.R. Add further documentation examples for some of the S3 methods
+0.995   Address build issues.
+0.996   Address build issues.
+0.997   Address build issues.
+0.998	Sporatic runtime error on Windows fixed by disabling OpenMP preprocessor directives
