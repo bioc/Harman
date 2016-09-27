@@ -3,7 +3,8 @@
 #' that maximises the removal of batch effects from datasets, with the
 #' constraint that the probability of overcorrection (i.e. removing genuine
 #' biological signal along with batch noise) is kept to a fraction which is set
-#' by the end-user (Oytam et al, 2016).
+#' by the end-user (Oytam et al, 2016;
+#' \url{http://dx.doi.org/10.1186/s12859-016-1212-5}).
 #' 
 #' Harman expects unbounded data, so for example, with HumanMethylation450
 #' arrays do not use the Beta statistic (with values constrained between 0 and
@@ -40,12 +41,13 @@
 #' (such as background correction) applied prior to using Harman.
 #' For converge, the number of simulations, \code{numrepeats} parameter should
 #' probably should be at least 100,000. The underlying principle of Harman rests
-#' upon PCA, which is a parametric technique. This implies Harman should be optimal
-#' when the data is normally distributed. However, PCA is known to be rather
-#' robust to very non-normal data.
+#' upon PCA, which is a parametric technique. This implies Harman should be
+#' optimal when the data is normally distributed. However, PCA is known to be
+#' rather robust to very non-normal data.
 #' @seealso \code{\link{harman}}, \code{\link{reconstructData}},
 #' \code{\link{pcaPlot}}, \code{\link{arrowPlot}}
-#' @references Oytam, et al. (2016).
+#' @references Oytam et al (2016) BMC Bioinformatics 17:1.
+#' DOI: 10.1186/s12859-016-1212-5
 #' @examples
 #' library(HarmanData)
 #' data(OLF)
@@ -157,8 +159,11 @@ harman <- function(datamatrix, expt, batch, limit=0.95, numrepeats=100000L,
   # Don't shift the original data into the .RunHarman function as we just need
   # the PCs to kick it off.
   if(printInfo == TRUE) cat('Performing PCA... ')
-  pca <- prcomp(t(datamatrix), retx=TRUE, center=TRUE)
-  pc_data_scores <- pca$x[, 1:(ncol(pca$x) - 1)]
+  
+  #pca <- prcomp(t(datamatrix), retx=TRUE, center=TRUE, scale. = FALSE)
+  #pc_data_scores <- pca$x[, 1:(ncol(pca$x) - 1)]
+  pca <- harmanScores(datamatrix)
+  pc_data_scores <- pca$scores
   
   # Try and free up RAM, but keep the sample names first.
   sample_names <- dimnames(datamatrix)[[2]]
@@ -174,9 +179,12 @@ harman <- function(datamatrix, expt, batch, limit=0.95, numrepeats=100000L,
 
   
   if(printInfo == TRUE) cat('Now calling the Rcpp layer.\n')
-  res <- .callHarman(pc_data_scores, group, limit, numrepeats,
-                                 randseed, forceRand, printInfo)
+  #res <- .callHarman(pc_data_scores, group, limit, numrepeats,
+  #                               randseed, forceRand, printInfo)
+  res <- .callHarman(pc_data_scores, group, limit, numrepeats, randseed,
+                     forceRand, printInfo)
   
+    
   #####  Form S3 object  #####
   
   parameters <- list(limit=limit, numrepeats=numrepeats, randseed=randseed,

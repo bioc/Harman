@@ -45,7 +45,8 @@ Harman is a PCA and constrained optimisation based technique
 that maximises the removal of batch effects from datasets, with the
 constraint that the probability of overcorrection (i.e. removing genuine
 biological signal along with batch noise) is kept to a fraction which is set
-by the end-user (Oytam et al, 2016).
+by the end-user (Oytam et al, 2016;
+\url{http://dx.doi.org/10.1186/s12859-016-1212-5}).
 
 Harman expects unbounded data, so for example, with HumanMethylation450
 arrays do not use the Beta statistic (with values constrained between 0 and
@@ -62,9 +63,9 @@ have normalisation and any other global adjustment for noise reduction
 (such as background correction) applied prior to using Harman.
 For converge, the number of simulations, \code{numrepeats} parameter should
 probably should be at least 100,000. The underlying principle of Harman rests
-upon PCA, which is a parametric technique. This implies Harman should be optimal
-when the data is normally distributed. However, PCA is known to be rather
-robust to very non-normal data.
+upon PCA, which is a parametric technique. This implies Harman should be
+optimal when the data is normally distributed. However, PCA is known to be
+rather robust to very non-normal data.
 }
 \examples{
 library(HarmanData)
@@ -85,7 +86,8 @@ res <- harman(datamatrix, expt=batches$Treatment, batch=batches$Batch)
 arrowPlot(res, 1, 3)
 }
 \references{
-Oytam, et al. (2016).
+Oytam et al (2016) BMC Bioinformatics 17:1.
+DOI: 10.1186/s12859-016-1212-5
 }
 \seealso{
 \code{\link{harman}}, \code{\link{reconstructData}},

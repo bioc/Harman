@@ -39,6 +39,41 @@ test.harman <- function() {
 }
 
 
+test.scores.standardcase <- function() {
+  
+  # Standard case for nrow(x) >= ncol(x)
+  olf_prcomp <- prcomp(t(olf.data))
+  olf_scores <- Harman:::harmanScores(olf.data)
+
+  checkIdentical(dim(olf_scores$rotation), dim(olf.data),
+                 msg='scores, dimensions test')
+  checkEquals(olf_prcomp$center, olf_scores$center, msg='scores, center test')
+  checkEquals(olf_prcomp$rotation, olf_scores$rotation,
+              msg='scores, rotation test')
+  checkEquals(olf_prcomp$x, olf_scores$scores, msg='scores, scores test')
+}
+
+
+test.scores.specialcase <- function() {
+  
+  # Special case for nrow(x) < ncol(x)
+  #sml <- ncol(olf.data) - 1
+  #olf_sml_prcomp <- prcomp(t(olf.data[1:sml, ]))
+  #olf_sml_scores <- Harman:::harmanScores(olf.data[1:sml, ])
+  
+  #res_sml <- harman(as.matrix(olf.data[1:sml, ]), expt, batch)
+  #reconstructData(res_sml, this='original')
+
+  #checkIdentical(dim(olf_sml_scores$rotation), dim(olf.data[1:sml, ]),
+  #               msg='scores, special case dimension test')
+  #checkEquals(olf_sml_prcomp$center, olf_sml_scores$center,
+  #            msg='scores, special case center test')
+  #checkIdentical(dim(olf_sml_scores$scores), c(ncol(olf.data), ncol(olf.data)),
+  #               msg='scores, special case dimension2 test')
+  
+}
+
+
 test.reconstructData <- function() {
   
   remade <- reconstructData(res, this='original')

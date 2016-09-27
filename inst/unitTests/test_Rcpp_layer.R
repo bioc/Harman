@@ -9,7 +9,8 @@ test.callHarman <- function() {
 
   data(IMR90)
   pca <- prcomp(t(imr90.data), retx=TRUE, center=TRUE)
-  pc_data_scores <- pca$x[, 1:(ncol(pca$x) - 1)]
+  #pc_data_scores <- pca$x[, 1:(ncol(pca$x) - 1)]
+  pc_data_scores <- pca$x
   expt <- as.factor(imr90.info$Treatment)
   batch <- as.factor(imr90.info$Batch)
   group <- as.matrix(data.frame(expt=as.integer(expt), batch=as.integer(batch)))
