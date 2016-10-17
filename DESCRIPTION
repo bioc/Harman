@@ -2,7 +2,7 @@ Package: Harman
 Type: Package
 Title: The removal of batch effects from datasets using a PCA and
         constrained optimisation based technique
-Version: 1.2.0
+Version: 1.3.0
 Date: 2016-03-31
 Authors@R: c(person("Josh", "Bowden", role = "aut", email =
         "josh.bowden@csiro.au"), person("Jason", "Ross", role =
