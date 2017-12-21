@@ -41,18 +41,14 @@ library(knitr)
 library(RColorBrewer)
 ```
 
-
-```{r}
-library(Harman)
-library(HarmanData)
-```
-
 # Transcriptome data examples
 
 ## Working with a simple transciptome microarray dataset
 
 First off, let's load an example dataset from `r Biocexptpkg("HarmanData")` where the batches and experimental variable are balanced.
 ```{r}
+library(Harman)
+library(HarmanData)
 data(OLF)
 ```
 
@@ -106,7 +102,7 @@ summary(olf.harman)
 kable(olf.harman$stats)
 ```
 
-As the confidence (limit) was 0.95, Harman will look for batch effects until this limit is met. It does this by reducing the batch means in an iterative way using a binary search algorithm until the chance that biological variance is being removed (the factor given in expt) is too high. Consider the value specified in the stats column  confidence as the likelihood that separation of samples in this PC is due to batch alone and not due to the experimental variable. If this confidence value is less than limit, Harman will not make another iterative correction. For example, on PC8 the confidence is about 0.835 which is below the limit of 0.95, so Harman did not alter data on this PC. Let's check this on a plot.
+As the confidence (limit) was 0.95, Harman will look for batch effects until this limit is met. It does this by reducing the batch means in an iterative way using a binary search algorithm until the chance that biological variance is being removed (the factor given in expt) is too high. Consider the values specified in the `confidence` column as the likelihood that separation of samples in this PC is due to batch alone and not due to the experimental variable. If this confidence value is less than limit, Harman will not make another iterative correction. For example, on PC8 the confidence is about 0.835 which is below the limit of 0.95, so Harman did not alter data on this PC. Let's check this on a plot.
 ```{r, fig.height=5, fig.width=5}
 arrowPlot(olf.harman, 1, 8)
 ```
@@ -127,7 +123,7 @@ pcaPlot(olf.harman, colBy='expt', pchBy='batch', main='Col by Expt')
   
 ### Reconstruct the corrected data
 
-So, if corrections have been made and we're happy with the value of limit, then we reconstruct corrected data from the Harman adjusted PC scores. To do this a harmanresults object is handed to the function `reconstructData()`. This function produces a matrix of the same dimensions as the input matrix filled with corrected data.
+So, if corrections have been made and we're happy with the value of limit, then we reconstruct corrected data from the Harman adjusted PC scores. To do this, a harmanresults object is handed to the function `reconstructData()`. This function produces a matrix of the same dimensions as the input matrix filled with corrected data.
 ```{r}
 olf.data.corrected <- reconstructData(olf.harman)
 ```
@@ -138,7 +134,7 @@ To convince you that Harman is working as it should in reconstructing the data b
 olf.data.remade <- reconstructData(olf.harman, this='original')
 all.equal(as.matrix(olf.data), olf.data.remade)
 ```
-*So, the data is indeed the same (to within the machine epsilon limit for floating point error)!*
+So, the data is indeed the same *(to within the machine epsilon limit for floating point error)!*
   
 ### How does the new data differ from the old data?
 
@@ -196,7 +192,7 @@ prcompPlot(imr90.pca, pc_x=1, pc_y=3, colFactor=imr90.info$Batch,
            pchFactor=imr90.info$Treatment, main='IMR90, PC1 v PC3')
 ```
 
-### Running Harman.
+### Running Harman
 ```{r}
 imr90.hm <- harman(as.matrix(imr90.data), expt=imr90.info$Treatment,
                    batch=imr90.info$Batch)
@@ -252,14 +248,14 @@ To illustrate, we use the toy dataset in `r Biocexptpkg("affydata")`. The `Dilut
 
 This toy example is taken from arrays hybridized to source A at 10 μg and 20 μg. There are two replicate arrays for each generated cRNA, with each array replicate processed in a different scanner. [*For more information see Gautier et al., affy - Analysis of Affymetrix GeneChip data at the probe level*](http://bioinformatics.oxfordjournals.org/content/20/3/307.full.pdf).
 ```{r affydata, warning=FALSE, message=FALSE, comment=FALSE}
-library(affydata, quietly = TRUE)
+library(affydata, quietly = TRUE, warn.conflicts = FALSE)
 data(Dilution)
 Dilution.log <- Dilution
 intensity(Dilution.log) <- log(intensity(Dilution))
 cols <- brewer.pal(nrow(pData(Dilution)), 'Paired')
 ```
   
-This dataset contains technical replicates of liver RNA run on two different scanners. Technical replicates are denoted as A and B samples. There are two technical replicates across two array scanners. The 10 and 20 The second 2 are also replicates. The second arrays are hybridized to twice as much RNA so the intensities should be in general bigger.
+This dataset contains technical replicates of liver RNA run on two different scanners. Technical replicates are denoted as A and B samples. There are two technical replicates across two array scanners. The 10 and 20 The second 2 are also replicates. The second arrays are hybridized to twice as much RNA so the intensities should be, in general, bigger.
 
 ```{r, echo=FALSE}
 kable(pData(Dilution))
@@ -269,10 +265,10 @@ kable(pData(Dilution))
 boxplot(Dilution, col=cols)
 ```
   
-Notice that the scanner effect is stronger than the RNA concentration effect. This certainly hints at a batch effect.
+Notice that the scanner effect (A vs B) is stronger than the RNA concentration effect (10 vs 20). This certainly hints at a batch effect.
 
 Let’s normalize the data by two methods (Loess and Quantile) and see if it removes this technical noise.
-```{r normalize, fig.height=7, fig.width=7}
+```{r normalize, fig.height=7, fig.width=9}
 Dilution.loess <- normalize(Dilution.log, method="loess")
 Dilution.qnt <- normalize(Dilution.log, method="quantiles")
 
@@ -512,7 +508,9 @@ ilogit2
 ilogit2(Inf)
 ilogit2(-Inf)
 ```
-A normalisation technique such as `preprocessIllumina()` in the `r Biocpkg("minfi")` package will give Beta-values of exactly 0 or 1, while a technique such as `preprocessSWAN()` does not. Instead it incorporates a small offset, alpha, as suggested by [Pan Du et al](http://www.biomedcentral.com/content/pdf/1471-2105-11-587.pdf). While we do not recommend use of a normalisation technique that generate exact 0 or 1 Beta-values, sometimes, we realise, only this normalised data is available. For instance, when the data has been downloaded from a public resource, pre-normalised with no raw red and green channel data. For this case, we have supplied the `shiftBetas()` helper function in Harman to resolve this problem. We shift beta values of *exactly* 0 or 1 by a very small amount (typically 1 x 10^-4^) before transformation into M-values. As an example:
+A normalisation technique such as `preprocessIllumina()` in the `r Biocpkg("minfi")` package will give Beta-values of exactly 0 or 1, while a technique such as `preprocessSWAN()` does not. Instead it incorporates a small offset, alpha, as suggested by [Pan Du et al](http://www.biomedcentral.com/content/pdf/1471-2105-11-587.pdf). If you have a `MethySet` object, the `r Biocpkg("minfi")` package now allows a user to specify an `offset` to the Beta-value as well as a `betaThreshold` to constrain betas away from 0 or 1.
+  
+While we do not recommend use of a normalisation technique that generate exact 0 or 1 Beta-values, sometimes, we realise, only this normalised data is available. For instance, when the data has been downloaded from a public resource, pre-normalised with no raw red and green channel data. For this case, we have supplied the `shiftBetas()` helper function in Harman to resolve this problem. We shift beta values of *exactly* 0 or 1 by a very small amount (typically 1 x 10^-4^) before transformation into M-values. As an example:
 
 ```{r}
 betas <- seq(0, 1, by=0.05)
@@ -648,7 +646,7 @@ ms_hm <- reconstructData(methHarman)
 betas_hm <- m2beta(ms_hm)
 ```
 
-## Limma
+## Limma analysis
 
 In downstream differential methylation analysis using `r Biocpkg("limma")` or otherwise, care must be taken to interpret the results. As Harman was run with the expt variable set to status, any other variation unrelated to status which is unbalanced across the two slides is considered as batch noise. For example, we have already shown that sex is a highly influential factor and it is unbalanced across the slides; only person of id3 is male and both the normal and cancer samples are on slide 5723646052. **Therefore, we expect Harman to attribute this gender effect to a slide effect.**
 
@@ -717,7 +715,7 @@ msms_pp <- pp.msms.data(msms.dataset)
 
 ### Batch structure
 
-```{r}
+```{r, echo=FALSE}
 kable(pData(msms_pp))
 ```
 
@@ -792,7 +790,7 @@ library(HarmanData)
 library(sva)
 
 modcombat <- model.matrix(~1, data=imr90.info)
-imr90.data.cb <- ComBat(dat=imr90.data, batch=imr90.info$Batch, mod=modcombat,
+imr90.data.cb <- ComBat(dat=as.matrix(imr90.data), batch=imr90.info$Batch, mod=modcombat,
                         par.prior=TRUE, prior.plots=FALSE)
 
 imr90.hr <- harman(imr90.data, expt = imr90.info$Treatment, batch = imr90.info$Batch)
@@ -848,6 +846,6 @@ diffMap(a=imr90.data.hr, b=imr90.data.cb, feature_order=probe_diffs_hr,
 
 The feature by feature and sample by sample nature of ComBat is evident. In particular, the outlying sample in batch 3 has been subjected to quite extensive feature adjustment.
   
-Harman adjusts the values of features within batches in a coordinated way. This is example, Harman identifies across batches a highly coordinate set of features which need correction.
+Harman adjusts the values of features within batches in a coordinated way. In is particular example, Harman identifies across batches a highly coordinate set of features which need correction.
 
-Despite their differences, the methods have large overlaps in the features they identify as needing correction and the amount of feature adjustment required.
+Despite their differences, the Harman and Combat approaches have large overlaps in the features they identify as needing correction and the amount of feature adjustment required.
