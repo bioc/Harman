@@ -34,9 +34,10 @@ olf.data.corrected <- reconstructData(olf.harman)
  
 Required packages for `R CMD Check` to pass (Packages used in Vignettes)
 ```R
-source("http://www.bioconductor.org/biocLite.R")
-biocLite()
-biocLite(c("BiocGenerics", "BiocStyle", "knitr", "rmarkdown", "RUnit",
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install()
+BiocManager::install(c("BiocGenerics", "BiocStyle", "knitr", "rmarkdown", "RUnit",
 "missMethyl", "RColorBrewer", "bladderbatch", "limma", "minfi", "lumi",
 "msmsEDA", "affydata", "minfiData"))
 ```
