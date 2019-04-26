@@ -473,7 +473,7 @@ contrast_matrix <- makeContrasts(sTCCwCIS - sTCC, sTCCwCIS - Normal,
 fit <- lmFit(exprs(bladderEset), design)
 fit2 <- contrasts.fit(fit, contrast_matrix)
 fit2 <- eBayes(fit2)
-summary(classifyTestsT(fit2))
+summary(decideTests(fit2))
 ```
 
 Now a linear model on the Harman corrected data:
@@ -481,7 +481,7 @@ Now a linear model on the Harman corrected data:
 fit_hm <- lmFit(exprs(CorrectedBladderEset), design)
 fit2_hm <- contrasts.fit(fit_hm, contrast_matrix)
 fit2_hm <- eBayes(fit2_hm)
-summary(classifyTestsT(fit2_hm))
+summary(decideTests(fit2_hm))
 ```
 
 We can see the dramatic effect Harman has had in reducing the number of significant microarray probes. The huge reduction in the Biopsy - Normal contrast makes biological sense, about half of the biopsies were from cystectomies that were histologically normal. The Harman corrected data on the sTCCwCIS - sTCC contrast suggests that surrounding *in situ* lesions (CIS) does not overly impact the transcriptome of superficial transitional cell carcinoma (sTCC).
