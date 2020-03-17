@@ -7,15 +7,15 @@ library(RUnit)
 data(OLF)
 expt <- olf.info$Treatment
 batch <- olf.info$Batch
-res <- harman(as.matrix(olf.data), expt, batch)
-resf <- harman(as.matrix(olf.data), expt, batch, forceRand=TRUE)
+res <- harman(as.matrix(olf.data), expt, batch, randseed=0)
+resf <- harman(as.matrix(olf.data), expt, batch, randseed=0, forceRand=TRUE)
 
 
 #####  Tests  #####
 
 test.harman <- function() {
 
-  resdf <- harman(olf.data, expt, batch)
+  resdf <- harman(olf.data, expt, batch, randseed=0)
   checkEquals(resdf, res)
   checkException(harman(as.character(as.matrix(olf.data)), expt, batch))
   checkException(harman(as.matrix(olf.data), expt, batch, limit=1.1))
@@ -100,7 +100,7 @@ test.pcaPlot <- function() {
 test.two_batches <- function() {
 
   two_batch <- olf.info$Batch %% 2
-  res2b <- harman(as.matrix(olf.data), expt=expt, batch=two_batch)
+  res2b <- harman(as.matrix(olf.data), expt=expt, batch=two_batch, randseed=0)
   is_same_correction <- resf$stats$correction == res2b$stats$correction
   checkEquals(res$corrected[, is_same_correction],
               res2b$corrected[, is_same_correction])
@@ -112,7 +112,7 @@ test.three_batches <- function() {
   three_batch <- olf.info$Batch
   three_batch[three_batch == 4] <- 3
   
-  res3b <- harman(as.matrix(olf.data), expt=expt, batch=three_batch)
+  res3b <- harman(as.matrix(olf.data), expt=expt, batch=three_batch, randseed=0)
   is_same_correction <- resf$stats$correction == res3b$stats$correction
   checkEquals(res$corrected[, is_same_correction],
               res3b$corrected[, is_same_correction])

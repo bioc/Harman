@@ -7,14 +7,7 @@
 #' values. The scores are corrected, but all three are needed later to
 #' reconstruct the data.
 harmanScores <- function(x) {
-
-  # x <- cars
-  # x <- t(cars)
-  # library(HarmanData)
-  # x <- olf.data
-  # x <- olf.data[1:60, 1:20]
-  # x <- olf.data[1:16, 1:20]
-  # x <- df16_scaled
+  
   x <- as.matrix(x)
 
   if(nrow(x) < ncol(x)) {
@@ -35,8 +28,6 @@ harmanScores <- function(x) {
     s <- svd(x)
     
     rotation <- s$u
-    #dimnames(rotation) <- list(colnames(x),
-    #                           paste0("PC", seq_len(ncol(rotation))))
     scores <- t(x) %*% rotation
   } else {
     # Standard case like in prcomp()

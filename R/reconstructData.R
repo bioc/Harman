@@ -13,6 +13,7 @@
 #' batch <- olf.info$Batch
 #' olf.harman <- harman(olf.data, expt, batch)
 #' olf.data.corrected <- reconstructData(olf.harman)
+#' @importFrom methods is
 #' @export
 reconstructData <- function(object, this='corrected')  {
   
@@ -25,7 +26,7 @@ reconstructData <- function(object, this='corrected')  {
   # ones(n,1) == matrix(1, n, 1)
   # means_initialprobesets == object$center
   
-  if(class(object) != 'harmanresults') {
+  if(!methods::is(object, "harmanresults")) {
     stop(paste("Require an instance of 'harmanresults', not class \'",
                class(object), "\'.", sep=""))
   }

@@ -2,6 +2,14 @@
 \title{News for Package \pkg{Harman}}
 \encoding{UTF-8}
 
+\section{Changes in version 1.15.0}{
+  \itemize{
+		\item Previously, if no random seed is specified to the \code{harman} function, 
+		a seed of 0 was used. Now a random seed between 0 and 1e9 is picked at random.
+		}
+}
+
+
 \section{Changes in version 1.2.0}{
   \itemize{
 		\item Dynamically resizes legends depending upon the number of batches in \code{pcaPlot}

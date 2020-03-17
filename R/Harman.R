@@ -65,6 +65,8 @@
 #' batches <- read.table(infofile, header=TRUE, sep=",", row.names="Sample")
 #' res <- harman(datamatrix, expt=batches$Treatment, batch=batches$Batch)
 #' arrowPlot(res, 1, 3)
+#' @importFrom methods is
+#' @importFrom stats runif
 #' @export
 harman <- function(datamatrix, expt, batch, limit=0.95, numrepeats=100000L,
                    randseed, forceRand=FALSE, printInfo=FALSE) {
@@ -75,7 +77,7 @@ harman <- function(datamatrix, expt, batch, limit=0.95, numrepeats=100000L,
   }
   
   ######  Sanity checks  #####
-  if(class(datamatrix) != "matrix") {
+  if(!methods::is(datamatrix, "matrix")) {
     stop(paste("Require 'datamatrix' as a matrix or data.frame, not class \'",
                class(datamatrix), "\'.", sep=""))
   }
@@ -117,9 +119,8 @@ harman <- function(datamatrix, expt, batch, limit=0.95, numrepeats=100000L,
   
   if (!missing(randseed)) {
     if(!is.numeric(randseed)) stop("'randseed' needs to be numeric.")
-    set.seed(randseed)
   } else {
-    randseed <- 0
+    randseed <- stats::runif(1, 0, 1e9)
   }
   
   strict <- FALSE
@@ -134,16 +135,6 @@ harman <- function(datamatrix, expt, batch, limit=0.95, numrepeats=100000L,
     }
   }
   
-  #batch_rle <- rle(sort(as.character(batch)))
-  #if(length(unique(batch_rle$lengths)) != 1) {
-  #  msg <- "Batch sizes are unequal."
-  #  if(strict == FALSE) {
-  #    warning(msg)
-  #  } else {
-  #     stop(msg)
-  #  }
-  #}
-  
   # Coerce expt and batch to factors
   expt <- factor(expt)
   batch <- factor(batch)
@@ -153,18 +144,13 @@ harman <- function(datamatrix, expt, batch, limit=0.95, numrepeats=100000L,
          structure")
   }
   
-  
   #####  PCA  #####  
   
   # Don't shift the original data into the .RunHarman function as we just need
   # the PCs to kick it off.
   if(printInfo == TRUE) cat('Performing PCA... ')
-  
-  #pca <- prcomp(t(datamatrix), retx=TRUE, center=TRUE, scale. = FALSE)
-  #pc_data_scores <- pca$x[, 1:(ncol(pca$x) - 1)]
   pca <- harmanScores(datamatrix)
   pc_data_scores <- pca$scores
-  
   # Try and free up RAM, but keep the sample names first.
   sample_names <- dimnames(datamatrix)[[2]]
   rm(datamatrix)
@@ -179,8 +165,6 @@ harman <- function(datamatrix, expt, batch, limit=0.95, numrepeats=100000L,
 
   
   if(printInfo == TRUE) cat('Now calling the Rcpp layer.\n')
-  #res <- .callHarman(pc_data_scores, group, limit, numrepeats,
-  #                               randseed, forceRand, printInfo)
   res <- .callHarman(pc_data_scores, group, limit, numrepeats, randseed,
                      forceRand, printInfo)
   
@@ -193,7 +177,7 @@ harman <- function(datamatrix, expt, batch, limit=0.95, numrepeats=100000L,
   rownames(factors) <- sample_names
   factors$expt.numeric <- group[, 'expt']
   factors$batch.numeric <- group[, 'batch']
-  dim_names <- paste('PC',1:length(res[["confidence_vector"]]), sep='')
+  dim_names <- paste('PC',seq_len(res[["confidence_vector"]]), sep='')
   stats <- data.frame(dimension=dim_names,
                       confidence=res[["confidence_vector"]],
                       correction=res[["correction_vector"]])

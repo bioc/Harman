@@ -30,6 +30,7 @@
 #' @seealso \code{\link{prcomp}} \code{\link{rainbow}}
 #' @importFrom graphics legend plot
 #' @importFrom stats prcomp
+#' @importFrom methods is
 #' @export
 #' @examples
 #' library(HarmanData)
@@ -44,14 +45,17 @@
 prcompPlot <- function(object, pc_x=1, pc_y=2, scale=FALSE, colFactor=NULL,
                        pchFactor=NULL, palette="rainbow", legend=TRUE, ...) {
 
-  # Sanity check object
-  if(class(object) == "data.frame") {
+  ### Sanity check object
+  # Coerce data.frame to matrix
+  if(methods::is(object, "data.frame")) {
     object <- as.matrix(object)
   }
-  if(class(object) == "matrix" & typeof(object) %in% c('double', 'integer')) {
+  # Perform prcomp on double or integer matrices
+  if(methods::is(object, "matrix") & typeof(object) %in% c('double', 'integer')) {
     object <- stats::prcomp(t(object), retx=TRUE, center=TRUE, scale.=scale)
   }
-  if(class(object) != "prcomp") {
+  # Check if we have the output of prcomp
+  if(!methods::is(object, "prcomp")) {
     stop("Require an instance of 'prcomp', a matrix of type 'double' or
          'integer', or a data.frame coercible to such a matrix.")
   }
@@ -79,7 +83,7 @@ prcompPlot <- function(object, pc_x=1, pc_y=2, scale=FALSE, colFactor=NULL,
     stop('The length of pchFactor and object do not match.')
   }
   
-  mypchs <- (1:length(levels(pchFactor)))[pchFactor]  
+  mypchs <- (seq_len(length(levels(pchFactor))))[pchFactor]
   
   factor_names <- levels(colFactor)
   num_levels <- length(factor_names)

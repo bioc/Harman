@@ -59,7 +59,7 @@ print.summary.harmanresults <- function(x, ...) {
   top <- top[top < 1]
   ntop <- min(5, length(top))
   if(ntop > 0) {
-    print(top[1:ntop])
+    print(top[seq_len(ntop)])
   } else {
     cat('None, all have no correction with this confidence limit\n')
   }

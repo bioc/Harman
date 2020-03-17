@@ -35,13 +35,14 @@
 #' pcaPlot(olf.harman, colBy='expt')
 #' pcaPlot(olf.harman, pc_x=2, pc_y=3, this='original', pch=17)
 #' @importFrom graphics legend plot
+#' @importFrom methods is
 #' @export
 pcaPlot <- function(harmanresults, pc_x=1, pc_y=2, this='corrected',
                     colBy='batch', pchBy='expt', palette="rainbow",
                     legend=TRUE, col, pch, ...) {
 
   # Sanity checking
-  if(class(harmanresults) != 'harmanresults') {
+  if(!methods::is(harmanresults, "harmanresults")) {
     stop("Require an object of class 'harmanresults'.")
   }
   if(!(this %in% c('original', 'corrected'))) {
@@ -66,16 +67,12 @@ pcaPlot <- function(harmanresults, pc_x=1, pc_y=2, this='corrected',
   
   if(missing(pch)) {
     num_levels <- length(levels(harmanresults$factors[, pchBy]))
-    #num_expt <- 1:length(levels(harmanresults$factors$expt))
-    level_vector <- 1:num_levels
-    #pch <- level_vector[harmanresults$factors$expt]
+    level_vector <- seq_len(num_levels)
     pch <- level_vector[harmanresults$factors[[pchBy]]]
   }
   
-  graphics::plot(x=scores[, pc_x],
-                 y=scores[, pc_y],
-                 col=col,
-                 pch=pch,
+  graphics::plot(x=scores[, pc_x], y=scores[, pc_y],
+                 col=col, pch=pch,
                  xlab=colnames(scores)[pc_x],
                  ylab=colnames(scores)[pc_y],
                  ...)
@@ -83,7 +80,6 @@ pcaPlot <- function(harmanresults, pc_x=1, pc_y=2, this='corrected',
   if(draw_legend == TRUE) {
     legend_text <- levels(harmanresults$factors[, colBy])
     num_legend_text <- length(legend_text)
-    #legend(x=min(scores[, pc_x]), y=max(scores[, pc_y]),
     graphics::legend(x="topleft",
                      legend=legend_text,
                      fill=palette, cex=round((1 / num_legend_text)^0.25, 2),

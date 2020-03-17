@@ -19,8 +19,8 @@ NeedsCompilation: yes
 Suggests: HarmanData, BiocGenerics, BiocStyle, knitr, rmarkdown, RUnit,
         RColorBrewer, bladderbatch, limma, minfi, lumi, msmsEDA, affydata,
         minfiData, sva
-Depends: R (>= 3.5)
-Imports: Rcpp (>= 0.11.2), graphics, stats
+Depends: R (>= 3.6)
+Imports: Rcpp (>= 0.11.2), graphics, stats, methods
 LinkingTo: Rcpp
 License: GPL-3 + file LICENCE
 LazyData: true
@@ -30,6 +30,7 @@ biocViews: BatchEffect, Microarray, MultipleComparison,
 VignetteBuilder: knitr
 URL: http://www.bioinformatics.csiro.au/harman/
 BugReports: https://github.com/JasonR055/Harman/issues
-RoxygenNote: 5.0.1
+RoxygenNote: 7.0.2
+Encoding: UTF-8
 Author: Josh Bowden [aut], Jason Ross [aut, cre], Yalchin Oytam [aut]
 Maintainer: Jason Ross <jason.ross@csiro.au>

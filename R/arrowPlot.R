@@ -33,12 +33,13 @@
 #' olf.harman <- harman(olf.data, expt, batch)
 #' arrowPlot(olf.harman, pc_x=2, pc_y=3, length=0.2)
 #' @importFrom graphics arrows points legend plot
+#' @importFrom methods is
 #' @export
 arrowPlot <- function(harmanresults, pc_x=1, pc_y=2, colBy='batch',
                       palette="rainbow", col, length=0.1, legend=TRUE, ...) {
     
     # Sanity checking
-    if(class(harmanresults) != 'harmanresults') {
+    if(!methods::is(harmanresults, "harmanresults")) {
       stop("Require an object of class 'harmanresults'.")
     }
     if(!(colBy %in% c('batch', 'expt'))) {
@@ -64,7 +65,7 @@ arrowPlot <- function(harmanresults, pc_x=1, pc_y=2, colBy='batch',
       col <- palette[mylegend]
       
       if(legend == TRUE) {
-        graphics::legend(x="topleft", # x=min(xrange), y=max(yrange)
+        graphics::legend(x="topleft",
                          legend=levels(mylegend),
                          fill=palette, cex=0.7)
         }

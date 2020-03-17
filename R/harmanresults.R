@@ -1,7 +1,8 @@
 #' @name harmanresults
 #' @title Harman results object
 #' @description The S3 object returned after running \code{\link{harman}}.
-#' @slot factors \code{A data.frame} of the \code{expt} and \code{batch} vectors.
+#' @slot factors \code{A data.frame} of the \code{expt} and \code{batch}
+#' vectors.
 #' @slot parameters The harman runtime parameters. See \code{\link{harman}}
 #' for details.
 #' @slot stats Confidence intervals and the degree of correction for each

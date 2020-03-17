@@ -17,7 +17,8 @@ test.callHarman <- function() {
   res1 <- Harman:::.callHarman(pc_data_scores, group, limit=0.95,
                                numrepeats=1e5, randseed=64, forceRand=FALSE,
                                printInfo=FALSE)
-  res2 <- harman(imr90.data, expt=imr90.info$Treatment, batch=imr90.info$Batch)
+  res2 <- harman(imr90.data, expt=imr90.info$Treatment, batch=imr90.info$Batch,
+                 randseed=64)
   checkEquals(res1$corrected_scores, as.numeric(res2$corrected))
   
 }
