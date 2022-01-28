@@ -4,8 +4,17 @@
 \alias{prcompPlot}
 \title{PCA plot}
 \usage{
-prcompPlot(object, pc_x = 1, pc_y = 2, scale = FALSE, colFactor = NULL,
-  pchFactor = NULL, palette = "rainbow", legend = TRUE, ...)
+prcompPlot(
+  object,
+  pc_x = 1,
+  pc_y = 2,
+  scale = FALSE,
+  colFactor = NULL,
+  pchFactor = NULL,
+  palette = "rainbow",
+  legend = TRUE,
+  ...
+)
 }
 \arguments{
 \item{object}{data.frame, matrix or \code{prcomp} object.}
@@ -64,4 +73,3 @@ main='IMR90 PCA plot of Dim 1 and 3')
 \seealso{
 \code{\link{prcomp}} \code{\link{rainbow}}
 }
-

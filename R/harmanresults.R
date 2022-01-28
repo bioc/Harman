@@ -22,7 +22,7 @@
 #' data with the batch effect removed.
 #' @seealso \code{\link{harman}}, \code{\link{reconstructData}},
 #' \code{\link{pcaPlot}}, \code{\link{arrowPlot}}
-#' @exportClass harmanresults
+#' @export harmanresults
 #' @examples
 #' ## HarmanResults
 #' library(HarmanData)

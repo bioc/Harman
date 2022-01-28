@@ -4,8 +4,16 @@
 \alias{harman}
 \title{Harman batch correction method}
 \usage{
-harman(datamatrix, expt, batch, limit = 0.95, numrepeats = 100000L,
-  randseed, forceRand = FALSE, printInfo = FALSE)
+harman(
+  datamatrix,
+  expt,
+  batch,
+  limit = 0.95,
+  numrepeats = 100000L,
+  randseed,
+  forceRand = FALSE,
+  printInfo = FALSE
+)
 }
 \arguments{
 \item{datamatrix}{matrix or data.frame, the data values to correct with
@@ -93,4 +101,3 @@ DOI: 10.1186/s12859-016-1212-5
 \code{\link{harman}}, \code{\link{reconstructData}},
 \code{\link{pcaPlot}}, \code{\link{arrowPlot}}
 }
-

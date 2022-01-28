@@ -28,4 +28,3 @@ plot(olf.harman)
 \seealso{
 \code{\link{harmanresults}} \code{\link{pcaPlot}}
 }
-

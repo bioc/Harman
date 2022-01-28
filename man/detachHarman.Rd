@@ -13,4 +13,3 @@ None
 A helper function that can be called if \code{\link{harman}}
 had to be aborted.
 }
-

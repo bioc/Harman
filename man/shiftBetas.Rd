@@ -25,4 +25,3 @@ newBetas <- shiftBetas(betas, shiftBy=1e-4)
 newBetas
 range(newBetas)
 }
-

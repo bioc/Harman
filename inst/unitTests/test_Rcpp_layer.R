@@ -27,35 +27,36 @@ test.callHarman <- function() {
 test.forceRand <- function() {
   
   precision_limit <- 0.02
+  my_rep <- 3e5
   
   data(IMR90)
   imr <- list()
   imr[['F']] <- harman(imr90.data, expt=imr90.info$Treatment,
-                       batch=imr90.info$Batch, numrepeats=1e5, randseed=42,
+                       batch=imr90.info$Batch, numrepeats=my_rep, randseed=42,
                        forceRand=FALSE)
   
   imr[['T']] <- harman(imr90.data, expt=imr90.info$Treatment,
-                       batch=imr90.info$Batch, numrepeats=1e5, randseed=42,
+                       batch=imr90.info$Batch, numrepeats=my_rep, randseed=42,
                        forceRand=TRUE)
   
   data(NPM)
   npm <- list()
   npm[['F']] <- harman(npm.data, expt=npm.info$Treatment,
-                       batch=npm.info$Batch, numrepeats=1e5, randseed=42,
+                       batch=npm.info$Batch, numrepeats=my_rep, randseed=42,
                        forceRand=FALSE)
   
   npm[['T']] <- harman(npm.data, expt=npm.info$Treatment,
-                       batch=npm.info$Batch, numrepeats=1e5, randseed=42,
+                       batch=npm.info$Batch, numrepeats=my_rep, randseed=42,
                        forceRand=TRUE)
   
   data(OLF)
   olf <- list()
   olf[['F']] <- harman(olf.data, expt=olf.info$Treatment,
-                       batch=olf.info$Batch, numrepeats=3e5, randseed=42,
+                       batch=olf.info$Batch, numrepeats=my_rep, randseed=42,
                        forceRand=FALSE)
   
   olf[['T']] <- harman(olf.data, expt=olf.info$Treatment,
-                       batch=olf.info$Batch, numrepeats=3e5, randseed=42,
+                       batch=olf.info$Batch, numrepeats=my_rep, randseed=42,
                        forceRand=TRUE)
   
   results <- list(imr=imr, npm=npm, olf=olf)

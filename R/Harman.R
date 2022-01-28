@@ -177,7 +177,7 @@ harman <- function(datamatrix, expt, batch, limit=0.95, numrepeats=100000L,
   rownames(factors) <- sample_names
   factors$expt.numeric <- group[, 'expt']
   factors$batch.numeric <- group[, 'batch']
-  dim_names <- paste('PC',seq_len(res[["confidence_vector"]]), sep='')
+  dim_names <- paste('PC',seq_len(length(res[["confidence_vector"]])), sep='')
   stats <- data.frame(dimension=dim_names,
                       confidence=res[["confidence_vector"]],
                       correction=res[["correction_vector"]])

@@ -19,4 +19,3 @@ A tweaking of \code{stats::prcomp} such that for the svd, the
 transpose of u is used instead of v when the number of assays is less than
 the number of samples.
 }
-

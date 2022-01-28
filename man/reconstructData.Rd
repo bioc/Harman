@@ -30,4 +30,3 @@ olf.data.corrected <- reconstructData(olf.harman)
 \seealso{
 \code{\link{harman}} \code{\link{harmanresults}}
 }
-

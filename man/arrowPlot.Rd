@@ -4,8 +4,17 @@
 \alias{arrowPlot}
 \title{PCA before and after arrow plot for harman results}
 \usage{
-arrowPlot(harmanresults, pc_x = 1, pc_y = 2, colBy = "batch",
-  palette = "rainbow", col, length = 0.1, legend = TRUE, ...)
+arrowPlot(
+  harmanresults,
+  pc_x = 1,
+  pc_y = 2,
+  colBy = "batch",
+  palette = "rainbow",
+  col,
+  length = 0.1,
+  legend = TRUE,
+  ...
+)
 }
 \arguments{
 \item{harmanresults}{an instance of \code{harmanresults}.}
@@ -59,4 +68,3 @@ arrowPlot(olf.harman, pc_x=2, pc_y=3, length=0.2)
 \seealso{
 \code{\link{harmanresults}} \code{\link{plot.harmanresults}}
 }
-

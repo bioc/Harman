@@ -4,9 +4,19 @@
 \alias{pcaPlot}
 \title{PCA plot for harman results}
 \usage{
-pcaPlot(harmanresults, pc_x = 1, pc_y = 2, this = "corrected",
-  colBy = "batch", pchBy = "expt", palette = "rainbow", legend = TRUE,
-  col, pch, ...)
+pcaPlot(
+  harmanresults,
+  pc_x = 1,
+  pc_y = 2,
+  this = "corrected",
+  colBy = "batch",
+  pchBy = "expt",
+  palette = "rainbow",
+  legend = TRUE,
+  col,
+  pch,
+  ...
+)
 }
 \arguments{
 \item{harmanresults}{An instance of \code{harmanresults}.}
@@ -64,4 +74,3 @@ pcaPlot(olf.harman, pc_x=2, pc_y=3, this='original', pch=17)
 \seealso{
 \code{\link{harmanresults}} \code{\link{plot.harmanresults}}
 }
-

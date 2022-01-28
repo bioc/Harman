@@ -18,7 +18,8 @@ data with the batch effect removed.
 \section{Slots}{
 
 \describe{
-\item{\code{factors}}{\code{A data.frame} of the \code{expt} and \code{batch} vectors.}
+\item{\code{factors}}{\code{A data.frame} of the \code{expt} and \code{batch}
+vectors.}
 
 \item{\code{parameters}}{The harman runtime parameters. See \code{\link{harman}}
 for details.}
@@ -36,6 +37,7 @@ pricipal component.}
 
 \item{\code{corrected}}{The harman corrected PC scores.}
 }}
+
 \examples{
 ## HarmanResults
 library(HarmanData)
@@ -53,4 +55,3 @@ olf.data.corrected <- reconstructData(olf.harman)
 \code{\link{harman}}, \code{\link{reconstructData}},
 \code{\link{pcaPlot}}, \code{\link{arrowPlot}}
 }
-

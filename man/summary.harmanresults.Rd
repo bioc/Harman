@@ -28,4 +28,3 @@ summary(olf.harman)
 \seealso{
 \code{\link{harmanresults}}
 }
-

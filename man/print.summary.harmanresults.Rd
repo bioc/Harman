@@ -19,4 +19,3 @@ Prints summary information from an object of class
 \description{
 Print method for \code{summary.harmanresults}.
 }
-
