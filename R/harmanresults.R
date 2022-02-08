@@ -6,7 +6,7 @@
 #' @slot parameters The harman runtime parameters. See \code{\link{harman}}
 #' for details.
 #' @slot stats Confidence intervals and the degree of correction for each
-#' pricipal component.
+#' principal component.
 #' @slot center The centering vector returned by \code{\link{prcomp}} with
 #' \code{center=TRUE}.
 #' @slot rotation The matrix of eigenvectors (by column) returned from
@@ -22,7 +22,6 @@
 #' data with the batch effect removed.
 #' @seealso \code{\link{harman}}, \code{\link{reconstructData}},
 #' \code{\link{pcaPlot}}, \code{\link{arrowPlot}}
-#' @export harmanresults
 #' @examples
 #' ## HarmanResults
 #' library(HarmanData)
@@ -35,4 +34,8 @@
 #' pcaPlot(olf.harman, pc_x=2, pc_y=3)
 #' pcaPlot(olf.harman, pc_x=2, pc_y=3, colBy='expt', pch=1)
 #' olf.data.corrected <- reconstructData(olf.harman)
-NULL
+#' @export
+newHarmanresults <- function(x) {
+  class(x) <- c("harmanresults", class(x))
+  x
+}

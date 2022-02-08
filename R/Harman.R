@@ -30,7 +30,8 @@
 #' than full explicit calculation from all permutations).
 #' @param printInfo logical, whether to print information during computation or
 #' not.
-#' @return  A \code{\link{harmanresults}} S3 object.
+#' @return  A \code{harmanresults} S3 object.
+#' 
 #' @details The \code{datamatrix} needs to be of type \code{integer} or
 #' \code{numeric}, or alternatively a data.frame that can be coerced into one
 #' using \code{\link{as.matrix}}. The matrix is to be constructed with data
@@ -39,11 +40,18 @@
 #' \code{eSet} object, or any object which inherits from it. The data should
 #' have normalisation and any other global adjustment for noise reduction
 #' (such as background correction) applied prior to using Harman.
+#' 
 #' For converge, the number of simulations, \code{numrepeats} parameter should
 #' probably should be at least 100,000. The underlying principle of Harman rests
 #' upon PCA, which is a parametric technique. This implies Harman should be
 #' optimal when the data is normally distributed. However, PCA is known to be
 #' rather robust to very non-normal data.
+#' 
+#' The output \code{harmanresults} object may be presented to summary and data
+#' exploration functions such as \code{\link{plot.harmanresults}} and
+#' \code{\link{summary.harmanresults}} as well as the
+#' \code{\link{reconstructData}} function which creates a corrected matrix of
+#' data with the batch effect removed.
 #' @seealso \code{\link{harman}}, \code{\link{reconstructData}},
 #' \code{\link{pcaPlot}}, \code{\link{arrowPlot}}
 #' @references Oytam et al (2016) BMC Bioinformatics 17:1.
@@ -198,6 +206,6 @@ harman <- function(datamatrix, expt, batch, limit=0.95, numrepeats=100000L,
                   corrected=corrected)
   
   # Define the S3 results class
-  class(results) <- "harmanresults"
+  results <- newHarmanresults(results)
   results
 }

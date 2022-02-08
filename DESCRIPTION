@@ -20,7 +20,7 @@ Suggests: HarmanData, BiocGenerics, BiocStyle, knitr, rmarkdown, RUnit,
         RColorBrewer, bladderbatch, limma, minfi, lumi, msmsEDA, affydata,
         minfiData, sva
 Depends: R (>= 3.6)
-Imports: Rcpp (>= 0.11.2), graphics, stats, methods
+Imports: Rcpp (>= 0.11.2), graphics, stats, Ckmeans.1d.dp, parallel, methods
 LinkingTo: Rcpp
 License: GPL-3 + file LICENCE
 LazyData: true

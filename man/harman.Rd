@@ -46,7 +46,7 @@ than full explicit calculation from all permutations).}
 not.}
 }
 \value{
-A \code{\link{harmanresults}} S3 object.
+A \code{harmanresults} S3 object.
 }
 \description{
 Harman is a PCA and constrained optimisation based technique 

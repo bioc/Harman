@@ -32,4 +32,3 @@ shiftBetas <- function(betas, shiftBy=1e-4) {
   }
   betas
 }
-
