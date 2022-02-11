@@ -46,7 +46,21 @@ than full explicit calculation from all permutations).}
 not.}
 }
 \value{
-A \code{harmanresults} S3 object.
+A \code{harmanresults} S3 object:
+\describe{
+  \item{factors}{\code{A data.frame} of the \code{expt} and \code{batch}
+  vectors}
+  \item{parameters}{The harman runtime parameters. See \code{\link{harman}}
+  for details}
+  \item{stats}{Confidence intervals and the degree of correction for each
+  principal component}
+  \item{center}{The centering vector returned by \code{\link{prcomp}} with
+  \code{center=TRUE}}
+  \item{rotation}{The matrix of eigenvectors (by column) returned from
+  \code{\link{prcomp}}}
+  \item{original}{The original PC scores returned by \code{\link{prcomp}}}
+  \item{corrected}{The harman corrected PC scores}
+}
 }
 \description{
 Harman is a PCA and constrained optimisation based technique 
@@ -69,11 +83,18 @@ in columns, much like the `assayData` slot in the canonical Bioconductor
 \code{eSet} object, or any object which inherits from it. The data should
 have normalisation and any other global adjustment for noise reduction
 (such as background correction) applied prior to using Harman.
+
 For converge, the number of simulations, \code{numrepeats} parameter should
 probably should be at least 100,000. The underlying principle of Harman rests
 upon PCA, which is a parametric technique. This implies Harman should be
 optimal when the data is normally distributed. However, PCA is known to be
 rather robust to very non-normal data.
+
+The output \code{harmanresults} object may be presented to summary and data
+exploration functions such as \code{\link{plot.harmanresults}} and
+\code{\link{summary.harmanresults}} as well as the
+\code{\link{reconstructData}} function which creates a corrected matrix of
+data with the batch effect removed.
 }
 \examples{
 library(HarmanData)
@@ -98,6 +119,6 @@ Oytam et al (2016) BMC Bioinformatics 17:1.
 DOI: 10.1186/s12859-016-1212-5
 }
 \seealso{
-\code{\link{harman}}, \code{\link{reconstructData}},
+\code{\link{reconstructData}},
 \code{\link{pcaPlot}}, \code{\link{arrowPlot}}
 }

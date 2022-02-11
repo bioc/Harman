@@ -2,11 +2,7 @@
 % Please edit documentation in R/harmanresults.R
 \name{harmanresults}
 \alias{harmanresults}
-\alias{newHarmanresults}
 \title{Harman results object}
-\usage{
-newHarmanresults(x)
-}
 \description{
 The S3 object returned after running \code{\link{harman}}.
 }
@@ -29,7 +25,7 @@ vectors.}
 for details.}
 
 \item{\code{stats}}{Confidence intervals and the degree of correction for each
-pricipal component.}
+principal component.}
 
 \item{\code{center}}{The centering vector returned by \code{\link{prcomp}} with
 \code{center=TRUE}.}

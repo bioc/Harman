@@ -38,9 +38,10 @@ not.}
 A named vector containing the optimal value for k.
 }
 \description{
-This function takes a matrix of methylation beta values
-(typically from the Illumina Infinium Methylation Assay) and clusters the
-data across a range of ks specified buy the user.
+This function is part of a set of three functions to be run in
+series. \code{\link{discoverClusteredMethylation}} takes a matrix of
+methylation beta values (typically from the Illumina Infinium Methylation
+Assay) and clusters the data across a range of ks specified buy the user.
 
 Then the data is reclustered again across the the best two candidate values
 for k (determined by the rate of change in Bayesian information criterion),
@@ -66,12 +67,11 @@ beta differences to clusters after correction.
 \details{
 Betas values should be of type \code{double} with samples in
 columns and betas in rows. The betas need to be bounded between 0 and 1.
-The matrix is typically exported from a \code{\link{GenomicRatioSet}},
-\code{\link{GenomicMethylSet}} or \code{\link{MethylSet}} object via the
-\code{getBeta} S4 accessor method.
+The matrix is typically exported from a \code{\link[minfi]{GenomicRatioSet}},
+\code{\link[minfi]{GenomicMethylSet}} or \code{\link[minfi]{MethylSet}}
+object via the \code{getBeta} S4 accessor method.
 }
 \examples{
-library(Harman)
 library(HarmanData)
 data(episcope)
 bad_batches <- c(1, 5, 9, 17, 25)

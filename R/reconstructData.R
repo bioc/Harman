@@ -36,12 +36,9 @@ reconstructData <- function(object, this='corrected')  {
   }
   
   n <- ncol(object$rotation)
-  #n <- nrow(object$rotation)
-  #zeros <- matrix(0, n, 1)
   ones <- matrix(1, n, 1)
   
   # Add the extra column of zeros.
-  #scores <- cbind(object[[this]], zeros)
   scores <- object[[this]]
   
   # corrected_scorebatch_matrix*coeff'

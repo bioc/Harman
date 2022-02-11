@@ -3,7 +3,7 @@
 #' @description This wrapper should probably not be addressed directly except
 #' for debugging. Instead use \code{\link{harman}}. Input of PCA scores and the
 #' experiment structure (treatments and batches) and returns a batch corrected
-#' version of the PCA scores matrix
+#' version of the PCA scores matrix.
 #' @param pc_data_scores 2D NumericMatrix of PCA scores data (from the
 #' \code{prcomp$x} slot), rows = samples, cols = PC scores
 #' @param group The structure of the experiment, consisting of batch numbers and
@@ -18,12 +18,15 @@
 #' default from system time)
 #' @param forceRand Force algorithm
 #' @param printInfo Print update information to screen 
-#' @return SEXP  R list: scores.corrected  = harman_res_list["corrected_scores"]
-#'                             correction        = harman_res_list["correction"]
-#'                             confidence        = harman_res_list["confidence"]
+#' @return SEXP R list
+#' \itemize{
+#'   \item scores.corrected
+#'   \item correction
+#'   \item confidence
+#' }
 #' @note A data matrix with samples in columns must be transposed before PCA
 #' analysis and these scores in turn are tweaked a little before handing over
-#' to .callHarman. See the example below.
+#' to \code{.callHarman}. See the example below.
 #' @useDynLib Harman
 #' @importFrom Rcpp sourceCpp
 .callHarman <- function(pc_data_scores, group, limit, numrepeats, randseed,

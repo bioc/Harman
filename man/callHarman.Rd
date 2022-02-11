@@ -38,18 +38,21 @@ default from system time)}
 \item{printInfo}{Print update information to screen}
 }
 \value{
-SEXP  R list: scores.corrected  = harman_res_list["corrected_scores"]
-                            correction        = harman_res_list["correction"]
-                            confidence        = harman_res_list["confidence"]
+SEXP R list
+\itemize{
+  \item scores.corrected
+  \item correction
+  \item confidence
+}
 }
 \description{
 This wrapper should probably not be addressed directly except
 for debugging. Instead use \code{\link{harman}}. Input of PCA scores and the
 experiment structure (treatments and batches) and returns a batch corrected
-version of the PCA scores matrix
+version of the PCA scores matrix.
 }
 \note{
 A data matrix with samples in columns must be transposed before PCA
 analysis and these scores in turn are tweaked a little before handing over
-to .callHarman. See the example below.
+to \code{.callHarman}. See the example below.
 }

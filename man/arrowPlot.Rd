@@ -49,8 +49,8 @@ Generates an arrow plot for an instance of
 (original) in principle coordinates, while the arrow head is the new point
 (corrected) in principle coordinates. It can be observed that on principle
 components that have undergone correction
-(code{harmanresults$stats$correction < 1.0}), the samples within a batch will
-be coordinately moved towards \code{0} on that priciple component.
+(\code{harmanresults$stats$correction < 1.0}), the samples within a batch
+will be coordinately moved towards 0 on that principle component.
 }
 \details{
 Generates a Principle Component plot for an instance of

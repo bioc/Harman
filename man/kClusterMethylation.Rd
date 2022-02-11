@@ -22,17 +22,40 @@ not.}
 A \code{kClusters} S3 object.
 }
 \description{
-TODO
+This function is part of a set of three functions to be run in
+series. \code{\link{discoverClusteredMethylation}} takes a matrix of
+methylation beta values (typically from the Illumina Infinium Methylation
+Assay) and clusters the data across a range of ks specified buy the user.
+
+Then the data is reclustered again across the the best two candidate values
+for k (determined by the rate of change in Bayesian information criterion),
+and minimum cluster size and distance filters are employed. If both clusters
+meet these filters, then the higher value of k is returned.  
+This function should be run on uncorrected data that ideally has slides
+removed which are prone to batch effect. This will bias towards finding
+clusters that are driven by biological factors such as X-chromosome
+inactivation and allele-specific methylation.
+
+The output of this function is input for the
+\code{\link{kClusterMethylation}} function which extracts cluster membership
+and statistics on variance for a given matrix of beta values. It might be
+useful to discover clusters on samples less prone to clustering due to batch
+effect or cellular heterogeneity and then recluster all the data for set
+values of k via the \code{\link{kClusterMethylation}} function.
+
+Finally, a comparison of differences of uncorrected to
+batch-corrected beta values can be made using \code{\link{clusterStats}}.
+This function generates a data.frame containing log variance ratio and mean
+beta differences to clusters after correction.
 }
 \details{
 Betas values should be of type \code{double} with samples in
 columns and betas in rows. The betas need to be bounded between 0 and 1.
-The matrix is typically exported from a \code{\link{GenomicRatioSet}},
-\code{\link{GenomicMethylSet}} or \code{\link{MethylSet}} object via the
-\code{getBeta} S4 accessor method.
+The matrix is typically exported from a \code{\link[minfi]{GenomicRatioSet}},
+\code{\link[minfi]{GenomicMethylSet}} or \code{\link[minfi]{MethylSet}}
+object via the \code{getBeta} S4 accessor method.
 }
 \examples{
-library(Harman)
 library(HarmanData)
 data(episcope)
 bad_batches <- c(1, 5, 9, 17, 25)

@@ -30,8 +30,21 @@
 #' than full explicit calculation from all permutations).
 #' @param printInfo logical, whether to print information during computation or
 #' not.
-#' @return  A \code{harmanresults} S3 object.
-#' 
+#' @return  A \code{harmanresults} S3 object:
+#' \describe{
+#'   \item{factors}{\code{A data.frame} of the \code{expt} and \code{batch}
+#'   vectors}
+#'   \item{parameters}{The harman runtime parameters. See \code{\link{harman}}
+#'   for details}
+#'   \item{stats}{Confidence intervals and the degree of correction for each
+#'   principal component}
+#'   \item{center}{The centering vector returned by \code{\link{prcomp}} with
+#'   \code{center=TRUE}}
+#'   \item{rotation}{The matrix of eigenvectors (by column) returned from
+#'   \code{\link{prcomp}}}
+#'   \item{original}{The original PC scores returned by \code{\link{prcomp}}}
+#'   \item{corrected}{The harman corrected PC scores}
+#' }
 #' @details The \code{datamatrix} needs to be of type \code{integer} or
 #' \code{numeric}, or alternatively a data.frame that can be coerced into one
 #' using \code{\link{as.matrix}}. The matrix is to be constructed with data
@@ -52,7 +65,7 @@
 #' \code{\link{summary.harmanresults}} as well as the
 #' \code{\link{reconstructData}} function which creates a corrected matrix of
 #' data with the batch effect removed.
-#' @seealso \code{\link{harman}}, \code{\link{reconstructData}},
+#' @seealso \code{\link{reconstructData}},
 #' \code{\link{pcaPlot}}, \code{\link{arrowPlot}}
 #' @references Oytam et al (2016) BMC Bioinformatics 17:1.
 #' DOI: 10.1186/s12859-016-1212-5
@@ -206,6 +219,6 @@ harman <- function(datamatrix, expt, batch, limit=0.95, numrepeats=100000L,
                   corrected=corrected)
   
   # Define the S3 results class
-  results <- newHarmanresults(results)
+  results <- structure(results, class = "harmanresults")
   results
 }

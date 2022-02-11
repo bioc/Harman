@@ -1,7 +1,8 @@
 #' @title Discover clustered beta values
-#' @description This function takes a matrix of methylation beta values
-#' (typically from the Illumina Infinium Methylation Assay) and clusters the
-#' data across a range of ks specified buy the user.
+#' @description This function is part of a set of three functions to be run in
+#' series. \code{\link{discoverClusteredMethylation}} takes a matrix of
+#' methylation beta values (typically from the Illumina Infinium Methylation
+#' Assay) and clusters the data across a range of ks specified buy the user.
 #' 
 #' Then the data is reclustered again across the the best two candidate values
 #' for k (determined by the rate of change in Bayesian information criterion),
@@ -43,7 +44,6 @@
 #' object via the \code{getBeta} S4 accessor method.
 #' @seealso \code{\link{kClusterMethylation}}, \code{\link{clusterStats}}
 #' @examples
-#' library(Harman)
 #' library(HarmanData)
 #' data(episcope)
 #' bad_batches <- c(1, 5, 9, 17, 25)
@@ -63,7 +63,7 @@ discoverClusteredMethylation <- function(betas, ks=1:10, min_cluster_size=5,
                                          min_cluster_dist=0.1, max_clusters=4,
                                          cores=1, printInfo=FALSE) {
   
-  ######  Sanity checks  #####
+  ######  Internal function  #####
   testCluster <- function(b, ks, min_cluster_size, min_cluster_dist) {
     ckset <- list(Ckmeans.1d.dp::Ckmeans.1d.dp(b, ks[1]),
                   Ckmeans.1d.dp::Ckmeans.1d.dp(b, ks[2]))
@@ -78,8 +78,13 @@ discoverClusteredMethylation <- function(betas, ks=1:10, min_cluster_size=5,
         TRUE
       }
     })
-    # Very rarely returns -Inf, so build edge case for this
-    max(1, max(ks[has_min_n & has_min_gap]))
+    num_clust <- 1
+    # Only run if something qualifies
+    if(sum(has_min_n & has_min_gap) > 0) {
+      # Very rarely returns -Inf, so build edge case for this
+      num_clust <- max(1, max(ks[has_min_n & has_min_gap]))
+    }
+    num_clust
   }
   
   ######  Sanity checks  #####
@@ -103,12 +108,20 @@ discoverClusteredMethylation <- function(betas, ks=1:10, min_cluster_size=5,
   }
   rm(range_bs)
   
+  if(ncol(betas) <= min_cluster_size) {
+    stop("Minimum cluster size must be less than the number of beta value columns")
+  }
+  
+  if(min_cluster_dist >= 1 | min_cluster_dist <= 0) {
+    stop("Minimum cluster distance must be between 0 and 1.")
+  }
+  
   ######  Clustering  #####
   # Ckmeans.1d.dp will throw a warning to increase k if max k is used.
   # Suppress that warning
   if(printInfo) { cat("First clustering") }
   suppressWarnings(
-    unbiased_clusters <- parallel::mclapply(1:nrow(betas), function(p) {
+    unbiased_clusters <- parallel::mclapply(seq_len(nrow(betas)), function(p) {
       myclust <- Ckmeans.1d.dp::Ckmeans.1d.dp(betas[p, ], k=ks)
       list(num_clusters=length(myclust$centers),
            BIC=myclust$BIC)
@@ -134,8 +147,8 @@ discoverClusteredMethylation <- function(betas, ks=1:10, min_cluster_size=5,
   # Recluster for multiple cluster probes and specify distance and number cutoff
   if(printInfo) {cat(", done. Reclustering") }
   bs_small <- betas[names(top_ks), ]
-  best_k <- parallel::mclapply(1:length(top_ks), function(i) {
-    testCluster(sort(bs_small[i, ]), top_ks[[i]],
+  best_k <- parallel::mclapply(seq_along(top_ks), function(i) {
+    testCluster(bs_small[i, ], top_ks[[i]],
                 min_cluster_size, min_cluster_dist)
   }, mc.cores=cores)
   names(best_k) <- names(top_ks)

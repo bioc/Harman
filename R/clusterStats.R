@@ -1,7 +1,30 @@
 #' @title Compute LVR and meandiff statistics for beta values after batch
 #' correction
-#' @description 
-#' Illumina Infinium BeadChip
+#' @description This function is part of a set of three functions to be run in
+#' series. \code{\link{discoverClusteredMethylation}} takes a matrix of
+#' methylation beta values (typically from the Illumina Infinium Methylation
+#' Assay) and clusters the data across a range of ks specified buy the user.
+#' 
+#' Then the data is reclustered again across the the best two candidate values
+#' for k (determined by the rate of change in Bayesian information criterion),
+#' and minimum cluster size and distance filters are employed. If both clusters
+#' meet these filters, then the higher value of k is returned.  
+#' This function should be run on uncorrected data that ideally has slides
+#' removed which are prone to batch effect. This will bias towards finding
+#' clusters that are driven by biological factors such as X-chromosome
+#' inactivation and allele-specific methylation.
+#' 
+#' The output of this function is input for the
+#' \code{\link{kClusterMethylation}} function which extracts cluster membership
+#' and statistics on variance for a given matrix of beta values. It might be
+#' useful to discover clusters on samples less prone to clustering due to batch
+#' effect or cellular heterogeneity and then recluster all the data for set
+#' values of k via the \code{\link{kClusterMethylation}} function.
+#' 
+#' Finally, a comparison of differences of uncorrected to
+#' batch-corrected beta values can be made using \code{\link{clusterStats}}.
+#' This function generates a data.frame containing log variance ratio and mean
+#' beta differences to clusters after correction.
 #' @param pre_betas a matrix of methylation beta values \bold{prior to}
 #' correction.
 #' @param post_betas a matrix of methylation beta values \bold{after}
@@ -16,7 +39,6 @@
 #' @seealso \code{\link{kClusterMethylation}},
 #' \code{\link{discoverClusteredMethylation}}
 #' @examples
-#' library(Harman)
 #' library(HarmanData)
 #' data(episcope)
 #' bad_batches <- c(1, 5, 9, 17, 25)
@@ -36,11 +58,11 @@ clusterStats <- function(pre_betas, post_betas, kClusters) {
   ######  Sanity checks  #####
   if(!methods::is(pre_betas, "matrix")) {
     stop(paste("Require 'pre_betas' as class matrix, not class \'",
-               class(betas), "\'.", sep=""))
+               class(pre_betas), "\'.", sep=""))
   }
   if(!methods::is(post_betas, "matrix")) {
     stop(paste("Require 'post_betas' as class matrix, not class \'",
-               class(betas), "\'.", sep=""))
+               class(post_betas), "\'.", sep=""))
   }
   if(!methods::is(kClusters, "kClusters")) {
     stop(paste("Require 'kClusters' as class kClusters, not class \'",
