@@ -19,23 +19,11 @@ BiocStyle::markdown()
 
 # Introduction
 
-**Harman** {noun}  
-*`A threshing yard where wheat is separated from chaff`*  
-Origin: Turkish and Persian
+The quantification of methylation can be expressed as the log-transformed ratio of methylated over unmethylated signal (M) or the ratio of methylated over total (methylated plus unmethylated) signal (β). *It is important to use M values when batch effect correcting Infinium methylation data as these are unbounded*. By definition, β is constrained between 0 and 1, and after correction there is no guarantee the values will still be within this range. M values can be batch-adjusted and then transformed back into the more readily interpretable β methylation values by a simple inverse logit transformation. With this transformation, very large negative and positive M values become asymptotic to β of 0 and 1, respectively.
 
-The harman package is used to remove unwanted batch (technical) effects from datasets. It was designed for microarray and deep sequencing data, but it is applicable to any high-dimensional data where the experimental variable of interest is not completely confounded with the batch variable. Harman uses a PCA and constrained optimisation based technique. This vignette is a tutorial for using Harman in a number of common scenarios and also provides insight on how to interpret results.
-  
-For help with Harman, use the package help system. A good place to start is typing `?harman` in the console.
-Harman requires three inputs:
-  1. `datamatrix`, a matrix of type numeric or integer, or a data.frame that can be coerced into such using `as.matrix()`,
-  2. `expt`, a vector or factor containing the experimental grouping variable,
-  3. `batch`, a vector or factor containing the batch grouping variable.
+Before detecting clusters, this conversion from M-values to β must be undertaken.
 
-The matrix is to be constructed with features (typically microarray probes or sequencing counts) in rows and samples in columns, much like the assayData slot in the canonical  Bioconductor `eSet` object, or any object which inherits from it. The data should have normalisation and any other global adjustment for noise reduction (such as background correction) applied prior to using Harman.
-
-The fourth parameter of interest in Harman is limit, which sets the confidence limit for batch effect removal. The default is limit=0.95. We can consider the confidence limit an inverse of the alpha level, so there is 1 - limit chance (default of 0.05, or 5%) that some of the variance from the experimental variable is being removed along with the batch variance. This user specified limit parameter allows one to tune the aggressiveness of the batch effect removal. The more samples in each batch, the more opportunity Harman has to model the batch distributions, which allows a more precise identification (and subsequent removal) of batch effects.
-
-*The Harman package is available from Bioconductor (`r Biocpkg("Harman")`) or Github (`r Githubpkg("JasonR055/Harman")`).*
+*The Harman package is available from Bioconductor (`r Biocpkg("Harman")`).*
 ```{r, echo=FALSE, warning=FALSE}
 library(knitr)
 library(RColorBrewer)
@@ -491,15 +479,15 @@ rm(list=ls()[!grepl("^pca$", ls())])
 detach('package:bladderbatch')
 ```
 
-# Methylation data example
+# Methylation data examples
 
 ## Example dataset
 
-As an example, let's consider the Illumina Infinium HumanMethylation450 BeadChip data (450k array). First up, an important tip, **put M-values into Harman, not Beta-values.** Harman is designed for continuous ordinal data, not data which is constrained, such as Beta-values; which by definition are between 0 and 1. Input M-values into Harman and if Beta-values are needed downstream, convert the corrected M-values back into Beta-values using something like the `m2beta()` function in the `r Biocpkg("lumi")` package, or the `ilogit2()` function in `r Biocpkg("minfi")`.
+As an example, let's consider the Illumina Infinium HumanMethylation450 BeadChip data (450k array). First up, an important tip, **put M-values into Harman (M), not Beta-values (β).** Harman is designed for continuous ordinal data, not data which is constrained, such as β; which by definition are between 0 and 1. Input M into Harman and if β are needed downstream, convert the corrected M back into β using something like the `m2beta()` function in the `r Biocpkg("lumi")` package, or the `ilogit2()` function in `r Biocpkg("minfi")`.
   
-M-values also have the property of having far more centrality than Beta-values. PCA is a parametric technique and so it works best with an underlying Gaussian distribution to the data. While it has been historically shown that PCA works rather well in non-parametric settings, Harman might be expected to be more sensitive if the data is more centred (M-values), rather than bimodal at the extremes (Beta-values).
+M-values also have the property of having far more centrality than β. PCA is a parametric technique and so it works best with an underlying Gaussian distribution to the data. While it has been historically shown that PCA works rather well in non-parametric settings, Harman might be expected to be more sensitive if the data is more centred (M), rather than bimodal at the extremes (β).
   
-Beta values of exactly 0 or 1 will translate to minus infinity and infinity, respectively, in M-value space. An M-value is the `logit2()` of a Beta value and  Beta-values are `ilogit2` of the M-values. These infinite values will make the internal singular value decomposition (SVD) step of Harman throw an exception. Further, infinite M-values are not commutative. If an M-value of Inf or -Inf is transformed back into a Beta-value it will have the value NaN or 0, respectively. For these reasons we do not recommend a normalisation step which creates Beta-values of exactly 0 or 1.
+β of exactly 0 or 1 will translate to minus infinity and infinity, respectively, in M space. M is the `logit2()` of a β and β are `ilogit2` of M. These infinite values will make the internal singular value decomposition (SVD) step of Harman throw an exception. Further, infinite M-values are not commutative. If an M of Inf or -Inf is transformed back into a β it will have the value NaN or 0, respectively. For these reasons we do not recommend a normalisation step which creates β of exactly 0 or 1.
 
 ```{r, message=FALSE, warning=FALSE}
 library(minfi, quietly = TRUE)
@@ -508,9 +496,9 @@ ilogit2
 ilogit2(Inf)
 ilogit2(-Inf)
 ```
-A normalisation technique such as `preprocessIllumina()` in the `r Biocpkg("minfi")` package will give Beta-values of exactly 0 or 1, while a technique such as `preprocessSWAN()` does not. Instead it incorporates a small offset, alpha, as suggested by [Pan Du et al](http://www.biomedcentral.com/content/pdf/1471-2105-11-587.pdf). If you have a `MethySet` object, the `r Biocpkg("minfi")` package now allows a user to specify an `offset` to the Beta-value as well as a `betaThreshold` to constrain betas away from 0 or 1.
+A normalisation technique such as `preprocessIllumina()` in the `r Biocpkg("minfi")` package will give some β of exactly 0 or 1, while a technique such as `preprocessSWAN()` does not. Instead it incorporates a small offset, alpha, as suggested by [Pan Du et al](http://www.biomedcentral.com/content/pdf/1471-2105-11-587.pdf). If you have a `MethySet` object, the `r Biocpkg("minfi")` package now allows a user to specify an `offset` to the β as well as a `betaThreshold` to constrain betas away from 0 or 1.
   
-While we do not recommend use of a normalisation technique that generate exact 0 or 1 Beta-values, sometimes, we realise, only this normalised data is available. For instance, when the data has been downloaded from a public resource, pre-normalised with no raw red and green channel data. For this case, we have supplied the `shiftBetas()` helper function in Harman to resolve this problem. We shift beta values of *exactly* 0 or 1 by a very small amount (typically 1 x 10^-4^) before transformation into M-values. As an example:
+While we do not recommend use of a normalisation technique that generate β of exactly 0 or 1, sometimes, we realise, only this normalised data is available. For instance, when the data has been downloaded from a public resource, pre-normalised with no raw red and green channel data. For this case, we have supplied the `shiftBetas()` helper function in Harman to resolve this problem. We shift beta values of *exactly* 0 or 1 by a very small amount (typically 1 x 10^-4^) before transformation into M. As an example:
 
 ```{r}
 betas <- seq(0, 1, by=0.05)
@@ -546,12 +534,14 @@ mSetSw <- mSetSw[keep,]
 ```
 
 This dataset has quite a few phenotype variables of interest. The samples are paired cancer-normal samples from three people, 1 male and 2 females.
-```{r}
+```{r, echo=FALSE}
 kable(pData(mSetSw)[,c('Sample_Group', 'person', 'sex', 'status', 'Array',
                        'Slide')])
 ```
 
-Doing some exploratory data analysis using MDS (considering it is methylation data), we can see that status is separated on PC1 and sex on PC2. This makes biological sense as we know cancer and gender both have large effects on DNA methylation. In cancer samples, there is typically global hypomethylation and focal hypermethylation at some CpG islands. While in the case of gender, female and male samples have very different X chromosome methylation due to imprinting, as well as some autosomal CpG site differences.
+As mentioned above, it is prudent to look for sources of biological epigenetic variance which is potentially unrelated to the main experimental factor. If the source of variance has high population prevalence, it will often present by chance with unequal representation across each batch. If the biological variance is undeclared, batch effect correction methods will naïvely mistake this as array feature technical variance and moderate batches with unequal representation towards the global mean. In DNA methylation studies, obvious sources of biological variance are gender and cellular composition.
+
+Doing some exploratory data analysis using MDS (considering it is methylation data), we can see that status is separated on PC1 and sex on PC2. This makes biological sense as we know cancer and gender both have large effects on DNA methylation. In cancer samples, there is typically global hypomethylation and focal hypermethylation at some CpG islands. While in the case of gender, female and male samples have very different X chromosome methylation (due to X chromosome inactivation in females) and there are also other DNA gender-associated methylation differences on the autosomes.
   
 If the plot is recoloured by "Slide"", there is some suggestion a batch effect is intermingled with these two experimental variables. The tricky question is how to use Harman to remove the influence of Slide on the data, without also removing variance due to the experimental variables of interest?
 ```{r mdsplots, fig.height=5, fig.width=7}
@@ -590,7 +580,7 @@ table(expt=pData(mSetSw)$status, batch=pData(mSetSw)$Slide)
 
 ### Appropriate normalisation
 
-If the Beta-values are shifted away from 0 or 1 by a very small amount, (say 1e-7), they will generate extreme M-values. Instead a moderate correction (such as 1e-4) seems the preferred option.
+If the β distribution is shifted away from 0 or 1 by a very small amount, (say 1e-7), this will generate extreme M-values. Instead a moderate correction (such as 1e-4) seems the preferred option.
 ```{r shift, fig.height=7, fig.width=7}
 par(mfrow=c(2,2))
 library(lumi, quietly = TRUE)
@@ -608,7 +598,7 @@ plot(density(beta2m(getBeta(mSetSw)), 0.05), main="SWAN normalised M-values",
      cex.main=0.7)
 ```
 
-It can be seen that M-values have far more central-tendency (more Gaussian-like) than Beta-values.
+It can be seen that M have far more central-tendency (more Gaussian-like) than β.
 ```{r, fig.height=4, fig.width=7}
 par(mfrow=c(1,2))
 plot(density(shifted_betas, 0.1), main="Beta-values, shiftBy = 1e-4",
@@ -625,9 +615,9 @@ plot(density(shifted_ms, 0.1),
 plot(density(getM(mSetSw), 0.1), main="SWAN M-values", cex.main=0.7)
 ```
 
-**From here on, we will work with SWAN normalised M-values.**
+**From here on, we will work with SWAN normalised M.**
 
-### Harman correction of M-values
+### Harman correction of M
 
 For this example, status is declared as the experimental variable.  When comparing conditions with very large DNA methylation differences, such as cancer and non-neoplastic samples, the batch effect will not be so easy to observe amongst all that biological variation. This scenario changes with a more subtle phenotype of interest. More arrays in each batch will allow Harman to more easily find batch effects. Considering this experiment is so small, an aggressive setting (limit=0.65) is needed to find a batch effect across a number of PCs (PCs 2, 5 and 1 in particular). A plot shows the correction made was relatively minor.
 
@@ -645,6 +635,121 @@ It is difficult to tease out the batch effect with such a small experimental gro
 ms_hm <- reconstructData(methHarman)
 betas_hm <- m2beta(ms_hm)
 ```
+
+## Clustering of methylation values
+
+### Introduction
+
+**There are caveats with batch-effect correction of methylation data**. The distribution of β at particular CpG sites may be modal in nature, which results in a clustered methylation pattern across samples. Clustered methylation profiles can be due to technical or biological factors, and batch correction should ideally remove the former but preserve the latter.
+  
+Harman (and other methods such as ComBat) have biological variance to keep declared per sample, rather than per CpG site, so they are prone to erroneously attributing methylation clustering at particular CpG sites to technical factors. When the distribution of biologically relevant clustered methylation is unbalanced across batches, then batch effect removal software will inappropriately seek to converge the means of each batch. It is good practice to retrospectively identify the CpG sites subject to such erroneous correction as it can profoundly destroy biologically meaningful clustering of the data.
+  
+The first recommendation is to undertake exploratory data analysis (like the MDS plotting example above) to look for obvious sample-wise sources of biological variance in the data, such as gender and cellular composition. These sources of sample-wise biological variance should be declared *a priori* and incorporated as factors into the batch correction. Without this, methods such as Harman and ComBat will seek to eliminate this biological variance when the batches have unequal loading of these factors.
+  
+The second recommendation is to look for inappropriate feature-wise correction. Often this feature-wise biological variance on methylation arrays is the result of a single nucleotide polymorphism (SNP) at the cytosine within the measured CpG site. C-to-T transversion events at CpG sites are the most frequent SNPs in the genome and post-bisulfite conversion, this inherited genotype is misrepresented as epigenetic state – an inherited ‘T’ allele and a bisulfite-treated unmethylated ‘C’ allele are identical. CpG sites might also have methylation rates influenced by other proximal or distal SNPs. These cis-acting DNA polymorphisms can create allele-specific DNA methylation (ASM). Identifying feature-wise biological variance *a priori* is problematic. Filtering the features by lists of proximal SNPs does not account for unknown relationships between methylation state and distal SNPs, nor metastable epialleles. To optimally apply batch effect correction, we must empirically identify *post-hoc* the features where the algorithm is incorrectly distorting the data.
+  
+The aim of batch-effect correction is to reduce technical variance in the data. When the methylation data is clustered with unequal epiallele loadings across batches, batch-effect removal algorithms will moderate the batches together, reducing technical variance but destroying the biologically relevant clustering patterns. The more recent versions of Harman (since V1.24) have a solution to identify inappropriate correction via a 'cluster-aware' variance statistic instead of considering variance in totality. This statistic computes the sum of squares relative to each individual cluster centroid and not the centroid of all the data. The 'cluster-aware' variance statistic will separate out instances of appropriate and inappropriate correction. Thereafter, investigators can use batch-effect corrected values for CpG sites that qualify as appropriately corrected and the original uncorrected data for CpG sites highly clustered due to biological factors, where correction is inappropriate. Large EWAS studies can use the functions in Harman to find clustered CpG sites in their study. Smaller studies may wish to use the reference matrices we provide in the `r Biocpkg("HarmanData")` package.
+
+### Implications for EWAS
+**For the probes erroneously corrected, the original uncorrected data should be used in any downstream linear regressions.** It could also be useful to use the clustering data identified above to determine which probes might benefit from logistic regression analysis, where the probes are regressed not on the M or β value, but their cluster membership. This approach might be particularly useful for identifying and analysing metastable epialleles.
+
+### Loading the reference matrix
+
+A reference matrix of data from 5 datasets can be loaded from `r Biocpkg("HarmanData")`. 
+
+```{r}
+library(HarmanData)
+data(Infinium5)
+lvr.harman[1:2, ]
+md.harman[1:2, ]
+```
+
+
+### Discovering clusters _de novo_ in large EWAS studies
+
+To undertake this, there are a set of three functions in Harman designed to be run in series. Firstly, `discoverClusteredMethylation` takes a matrix of methylation beta values and clusters the data across a range of ks specified by the user. Then the data is reclustered again across the the best two candidate values for k (determined by the rate of change in Bayesian information criterion), and minimum cluster size and distance filters are employed. If both clusters meet these filters, then the higher value of k is returned. This function should be run on uncorrected data that ideally has slides removed which are prone to batch effect. This will bias towards finding clusters that are driven by biological factors such as X-chromosome inactivation and allele-specific methylation.
+  
+The output of the above is input for `kClusterMethylation`. This function extracts cluster membership and statistics on variance for a given β matrix. The full dataset should be specified for this step (not trimmed data where samples prone to batch effect are removed).
+  
+Finally, `clusterStats` provides a comparison of differences of uncorrected to batch-corrected β. This function generates a data.frame containing log variance ratio and mean beta differences to clusters after correction.
+
+Let's use the first 1000 rows on the toy data above to illustrate the workflow.
+
+```{r}
+betas_sml <- getBeta(mSetSw)[1:1000, ]
+betas_hm_sml <- betas_hm[1:1000, ]
+
+myK <- discoverClusteredMethylation(betas_sml, min_cluster_size = 3, cores=2, printInfo = TRUE)
+mykClust = kClusterMethylation(betas_sml, row_ks=myK, cores=2)
+res <- clusterStats(pre_betas=betas_sml,
+                   post_betas=betas_hm_sml,
+                   kClusters = mykClust)
+res[1:2, ]
+```
+
+  
+Here is a further canned example using 11 CpG sites from the EpiSCOPE cohort 450K data.
+```{r}
+library(HarmanData)
+data(episcope)
+bad_batches <- c(1, 5, 9, 17, 25)
+is_bad_sample <- episcope$pd$array_num %in% bad_batches
+myK <- discoverClusteredMethylation(episcope$original[, !is_bad_sample])
+mykClust <- kClusterMethylation(episcope$original, row_ks=myK)
+res <- clusterStats(pre_betas=episcope$original,
+                   post_betas=episcope$harman,
+                   kClusters = mykClust)
+res[1:2, ]
+```
+  
+This set of 11 CpG sites illustrates examples of appropriate (cg04294190) and inappropriate (cg25465065) correction.
+```{r clust_plot, fig.height=7, fig.width=7}
+slide_cols <- rep(brewer.pal(9, "Set1"), times=5)[as.factor(episcope$pd$array_num)]
+myplot <- function(probe) {
+  plot(episcope$original[probe, ],
+       main=paste(probe, ". Pre-var: ", round(res[probe, "pre_withinvar"], 5), sep=""),
+       xlab="", ylab="Beta", cex=0.7, cex.main=0.9, ylim=c(0, 1), col=slide_cols)
+  plot(episcope$harman[probe, ],
+       main=paste(probe, ". Post-var: ", round(res[probe, "post_withinvar"], 5), ", LVR: ", round(res[probe, "log2_var_ratio"], 2), sep=""),
+       xlab="", ylab="Beta", cex=0.7, cex.main=0.9, ylim=c(0, 1), col=slide_cols)
+}
+par(mfrow=c(2,2))
+myplot("cg04294190")
+myplot("cg25465065")
+```
+  
+For each feature, the number of clusters are determined empirically. In the above example, cg04294190 was identified as having 1 cluster as the slides prone to batch effect (1, 5, 9, 17, 25) were removed in the initial cluster identification step. One-dimensional K-means clustering analysis yielded 3 clusters for cg25465065. Next, the within-cluster sum of squares is computed for each cluster and summed as the total within-cluster sum of squares. This is computed before batch correction (pre) and after (post). To determine if the batch effection correction algorithm is appropriately correcting a given feature, `log2_var_ratio` (LVR) is the critical statistic. This is computed as `log2(post_withinvar / pre_withinvar)`. An LVR below 0 suggests the adjustment for that feature was appropriate, whereas an LVR above 0 indicates that cluster-aware variance is being magnified post-correction, so applying batch-effect correction to this probe is likely to be inappropriate.
+
+### Thresholding
+In practice, when applying the LVR statistic to identify batch-effect susceptible probes, fully methylated or unmethylated CpG sites often have very small corrections made to them by Harman, but given the initial small variance, result in large changes in LVR. To focus on probes with a large change in LVR and an appreciable difference to β after correction we suggest the use of thresholding.
+  
+To classify as 'erroneously corrected' or 'batch-effect susceptible' we suggest as a rule of thumb to use a cut-off of 50% variance increase (log2(1.5), LVR = 0.584) or decrease (log2(1/1.5), LVR = -0.584) and mean differences after correction of at least β >= |0.01|. These absolute value mean differences are given in the `meandiffs` column in the output of `clusterStats`.
+
+#### On *de novo* clustered data
+This is illustrated is below.
+```{r}
+# Erroneously corrected
+res$probe_id[res$log2_var_ratio > log2(1.5) & res$meandiffs > 0.01]
+# Batch-effect susceptible
+res$probe_id[res$log2_var_ratio < log2(1/1.5) & res$meandiffs > 0.01]
+```
+#### Using a reference
+The reference matrix can also be used to threshold. In the below example, we find all the probes in the MethylationEPIC reference datasets (BodyFatness, NOVI, URECA) which consistently seem batch-effect susceptible. Batch effects are fairly idiosyncratic to each project, so in this case we are hunting for probes which often seem troublesome across projects. To find erroneously corrected probes we are thresholding on 1 or more datasets. This accounts for rare SNPs which may only appear in high enough frequency to identify a cluster in a subset of projects.
+```{r}
+is_epic <- grepl("BodyFatness|NOVI|URECA", colnames(lvr.harman))
+epic_lvr <- na.omit(lvr.harman[, is_epic])
+epic_md <- na.omit(md.harman[, is_epic])
+
+sum_batchy_lvr <- apply(epic_lvr, 1, function(p) sum(p < log2(1/1.5)))
+sum_geno_lvr <- apply(epic_lvr, 1, function(p) sum(p > log2(1.5)))
+sum_md <- apply(epic_md, 1, function(p) sum(p > 0.01))
+
+table(sum_batchy_lvr & sum_md)
+table(sum_geno_lvr & sum_md)
+```
+
+Using these thresholds, there were `r sum(sum_batchy_lvr & sum_md)` probes consistently prone to some batch effect over the three MethylationEPIC datasets and `r sum(sum_geno_lvr & sum_md)` probes with a substantial erroneous changes post-correction, likely due to allele-specific methylation or a similar phenomenon.
+
 
 ## Limma analysis
 

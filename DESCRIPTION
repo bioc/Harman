@@ -2,13 +2,20 @@ Package: Harman
 Type: Package
 Title: The removal of batch effects from datasets using a PCA and
         constrained optimisation based technique
-Version: 1.23.1
-Date: 2016-03-31
-Authors@R: c(person("Josh", "Bowden", role = "aut", email =
-        "josh.bowden@csiro.au"), person("Jason", "Ross", role =
-        c("aut", "cre"), email = "jason.ross@csiro.au"),
-        person("Yalchin", "Oytam", role = "aut", email =
-        "yalchin.oytam@csiro.au") )
+Version: 1.23.2
+Date: 2022-02-16
+Authors@R: 
+    c(person(given = "Yalchin",
+             family="Oytam",
+             email = "Yalchin.Oytam@health.nsw.gov.au",
+             role = "aut"),
+      person(given="Josh",
+            family="Bowden",
+            role = "aut"),
+      person(given="Jason",
+             family="Ross",
+             email = "jason.ross@csiro.au",
+             role = c("aut", "cre")))
 Description: Harman is a PCA and constrained optimisation based
         technique that maximises the removal of batch effects from
         datasets, with the constraint that the probability of
@@ -24,7 +31,7 @@ Imports: Rcpp (>= 0.11.2), graphics, stats, Ckmeans.1d.dp, parallel, methods,
         matrixStats
 LinkingTo: Rcpp
 License: GPL-3 + file LICENCE
-LazyData: true
+LazyData: false
 biocViews: BatchEffect, Microarray, MultipleComparison,
         PrincipalComponent, Normalization, Preprocessing,
         DNAMethylation, Transcription, Software, StatisticalMethod
@@ -32,5 +39,3 @@ VignetteBuilder: knitr
 URL: http://www.bioinformatics.csiro.au/harman/
 RoxygenNote: 7.1.2
 Encoding: UTF-8
-Author: Josh Bowden [aut], Jason Ross [aut, cre], Yalchin Oytam [aut]
-Maintainer: Jason Ross <jason.ross@csiro.au>

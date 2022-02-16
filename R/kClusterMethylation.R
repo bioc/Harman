@@ -2,7 +2,7 @@
 #' @description This function is part of a set of three functions to be run in
 #' series. \code{\link{discoverClusteredMethylation}} takes a matrix of
 #' methylation beta values (typically from the Illumina Infinium Methylation
-#' Assay) and clusters the data across a range of ks specified buy the user.
+#' Assay) and clusters the data across a range of ks specified by the user.
 #' 
 #' Then the data is reclustered again across the the best two candidate values
 #' for k (determined by the rate of change in Bayesian information criterion),
