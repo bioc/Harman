@@ -99,13 +99,21 @@ kClusterMethylation <- function(betas, row_ks, cores=1, printInfo=FALSE) {
   if(length(ps) > 0) {
     # Need drop=FALSE as it's a special case for 1 row
     bs <- betas[names(ps), ,drop=FALSE]
-    if(printInfo) {cat("Clustering ", length(ps), " probes on ",
+    if(printInfo) { cat("Clustering ", length(ps), " probes on ",
                        cores, " core(s)", sep="") }
-    x <- parallel::mclapply(seq_along(ps), function(i) {
+    #x <- parallel::mclapply(seq_along(ps), function(i) {
+    #  Ckmeans.1d.dp::Ckmeans.1d.dp(bs[i, ], k=ps[i])[c("cluster", "centers",
+    #                                                   "size", "withinss",
+    #                                                   "tot.withinss")]
+    #}, mc.cores=cores)
+    cl = parallel::makeCluster(cores)
+    parallel::clusterExport(cl, c("bs", "ps"), envir = environment())
+    x <- parallel::parLapply(cl, seq_along(ps), function(i) {
       Ckmeans.1d.dp::Ckmeans.1d.dp(bs[i, ], k=ps[i])[c("cluster", "centers",
                                                        "size", "withinss",
                                                        "tot.withinss")]
-    }, mc.cores=cores)
+    })
+    parallel::stopCluster(cl)
     names(x) <- names(ps)
     if(printInfo) { cat(", done.\n") }
     

@@ -120,13 +120,23 @@ discoverClusteredMethylation <- function(betas, ks=1:10, min_cluster_size=5,
   # Ckmeans.1d.dp will throw a warning to increase k if max k is used.
   # Suppress that warning
   if(printInfo) { cat("First clustering") }
+  #suppressWarnings(
+  #  unbiased_clusters <- parallel::mclapply(seq_len(nrow(betas)), function(p) {
+  #    myclust <- Ckmeans.1d.dp::Ckmeans.1d.dp(betas[p, ], k=ks)
+  #    list(num_clusters=length(myclust$centers),
+  #         BIC=myclust$BIC)
+  #  }, mc.cores = cores)
+  #)
+  cl = parallel::makeCluster(cores)
+  parallel::clusterExport(cl, c("betas", "ks"), envir = environment())
   suppressWarnings(
-    unbiased_clusters <- parallel::mclapply(seq_len(nrow(betas)), function(p) {
+    unbiased_clusters <- parallel::parLapply(cl, seq_len(nrow(betas)), function(p) {
       myclust <- Ckmeans.1d.dp::Ckmeans.1d.dp(betas[p, ], k=ks)
       list(num_clusters=length(myclust$centers),
            BIC=myclust$BIC)
-    }, mc.cores = cores)
+    })
   )
+  parallel::stopCluster(cl)
   names(unbiased_clusters) <- rownames(betas)
   
   # Cycle over clusters and find the best two options by BIC
@@ -147,10 +157,21 @@ discoverClusteredMethylation <- function(betas, ks=1:10, min_cluster_size=5,
   # Recluster for multiple cluster probes and specify distance and number cutoff
   if(printInfo) {cat(", done. Reclustering") }
   bs_small <- betas[names(top_ks), ]
-  best_k <- parallel::mclapply(seq_along(top_ks), function(i) {
+
+  #best_k <- parallel::mclapply(seq_along(top_ks), function(i) {
+  #  testCluster(bs_small[i, ], top_ks[[i]],
+  #              min_cluster_size, min_cluster_dist)
+  #}, mc.cores=cores)
+  
+  cl = parallel::makeCluster(cores)
+  parallel::clusterExport(cl, c("bs_small", "top_ks", "min_cluster_size",
+                                "min_cluster_dist"), envir = environment())
+  best_k <- parallel::parLapply(cl, seq_along(top_ks), function(i) {
     testCluster(bs_small[i, ], top_ks[[i]],
                 min_cluster_size, min_cluster_dist)
-  }, mc.cores=cores)
+  })
+  parallel::stopCluster(cl)
+  
   names(best_k) <- names(top_ks)
   best_k <- do.call("c", best_k)
   if(printInfo) { cat(", done.\n") }
