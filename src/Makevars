@@ -31,13 +31,15 @@
 ## PKG_CXXFLAGS=$(shell $(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()") -I. # $(SHLIB_OPENMP_CXXFLAGS)
 ## PKG_LIBS=$(shell $(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()") # $(SHLIB_OPENMP_CXXFLAGS)
 
-
-PKG_CPPFLAGS = -D_ARRAYALIGNEMT=4 -D_USE_RCPP=1
-PKG_CXXFLAGS=`$(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()"` -I. ### $(SHLIB_OPENMP_CXXFLAGS)
-PKG_LIBS=`$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` ### $(SHLIB_OPENMP_CXXFLAGS)
+## Old flags below which break with C++20 
+## PKG_CPPFLAGS = -D_ARRAYALIGNEMT=4 -D_USE_RCPP=1
+## PKG_CXXFLAGS=`$(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()"` -I. ### $(SHLIB_OPENMP_CXXFLAGS)
+## PKG_LIBS=`$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"` ### $(SHLIB_OPENMP_CXXFLAGS)
 
 ## -lOpenCL -D_USE_CPP11 
 
+## These days, Rcpp flags are provided automatically via LinkingTo/Imports
+CXX_STD = CXX17
 
 ## As an alternative, one can also add this code in a file 'configure'
 ##

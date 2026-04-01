@@ -49,7 +49,9 @@ private:
  
 public:
   // Constructor creates an array of factorial results for numbers 1..maxN
-  CFactorials<T>(size_t maxN)
+  // Commenting out the old constructor which generates an error with C++20
+  // CFactorials<T>(size_t maxN)
+  CFactorials(size_t maxN)
   { 
     this->v_factorialData.reserve(32) ; // reserve space for all calculated values
     

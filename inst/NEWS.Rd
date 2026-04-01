@@ -2,6 +2,14 @@
 \title{News for Package \pkg{Harman}}
 \encoding{UTF-8}
 
+
+\section{Changes in version 1.39.0}{
+  \itemize{
+		\item Fix Linux build failure under C++20 by correcting the CFactorials constructor declaration in src/CMapSelectKFromN.h.
+	  \item Updated Makevars to stop producing deprecation warnings.
+		}
+}
+
 \section{Changes in version 1.23.1}{
   \itemize{
 		\item Code syntax tweaks to remove warnings raised in later version of R.

@@ -37,5 +37,5 @@ biocViews: BatchEffect, Microarray, MultipleComparison,
         DNAMethylation, Transcription, Software, StatisticalMethod
 VignetteBuilder: knitr
 URL: http://www.bioinformatics.csiro.au/harman/
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.3
 Encoding: UTF-8
